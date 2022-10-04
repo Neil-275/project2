@@ -1,0 +1,16 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% if not user.is_authenticated %}
+    <div> Sign in to use this feature </div>
+    {% else %}
+    <form action="{% url 'new_item' %}" method="post">
+        {% csrf_token %}
+        <table>
+            {{form.as_table}}
+        </table>
+        
+        <input type="submit" value="Post">
+    </form>
+    {% endif %}
+{% endblock %}
