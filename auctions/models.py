@@ -14,17 +14,20 @@ class auction_item(models.Model):
     created_by= models.ForeignKey(User,on_delete=models.CASCADE,default=0)
 
     def __str__ (self):
-        return f"{self.name}"
+        return f"{self.name}    Price:{self.bidset.last()}$   Created by{self.created_by}"
 
 class info_bid(models.Model):
     who= models.ForeignKey(User,on_delete=models.CASCADE,default=0)
     bid= models.FloatField()
-    item=models.ForeignKey(auction_item, on_delete= models.CASCADE)
+    item=models.ForeignKey(auction_item, on_delete= models.CASCADE,related_name="bidset")
+    
+    def __str__ (self):
+        return f"{self.bid}"
     
 class cmt(models.Model):
-    item= models.ForeignKey(auction_item, on_delete= models.CASCADE)
+    item= models.ForeignKey(auction_item, on_delete= models.CASCADE,related_name="comment")
     comment= models.TextField(max_length=500)
-    posted_by= models.IntegerField()
+    posted_by= models.ForeignKey(User,on_delete=models.CASCADE)
     date= models.DateTimeField(auto_now_add= True)
 
 

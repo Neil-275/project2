@@ -1,0 +1,14 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+<h3>{{item.name}}</h3>
+
+<ul>
+    
+    <li>Price: {{item.bidset.last}}$</li>
+    <li>Starting bid: {{item.bidset.first}}$</li>
+    <li>Posted by: {{item.created_by}}</li>
+    <li>Date: {{item.date}}</li>
+</ul>
+
+{% endblock %} 

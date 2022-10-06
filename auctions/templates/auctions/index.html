@@ -4,7 +4,7 @@
     <h2>Active Listings</h2>
     {% for item in list %}
     <ul>
-        <li>{{item}}</li>
+        <li><a href="{% url 'item' item.id %}">{{item}}</a></li>
     </ul>
     {% endfor %}
     TODO

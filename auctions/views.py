@@ -78,7 +78,9 @@ def new_item(request):
             name=f.cleaned_data["name"]
             st_bid=f.cleaned_data["st_bid"]
             description=f.cleaned_data["description"]
-            auction_item.objects.create(name=name, cur_bid=st_bid,description=description,created_by=request.user)
+            new=auction_item(name=name, cur_bid=st_bid,description=description,created_by=request.user)
+            new.save()
+            info_bid.objects.create(who=request.user,bid=st_bid,item=new)
             return render(request, "auctions/index.html",{
                 "list":auction_item.objects.all(),
             })
@@ -86,3 +88,7 @@ def new_item(request):
         "form": NewItem()
     })
 
+def item(request, idx):
+    return render( request, "auctions/display.html",{
+        "item": auction_item.objects.get(pk=idx)
+    })
