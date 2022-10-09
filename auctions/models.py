@@ -12,9 +12,12 @@ class auction_item(models.Model):
     date= models.DateTimeField(auto_now_add=True)
     description= models.TextField(max_length=500)
     created_by= models.ForeignKey(User,on_delete=models.CASCADE,default=0)
+    img= models.URLField(blank=False, default="")
 
     def __str__ (self):
-        return f"{self.name}    Price:{self.bidset.last()}$   Created by{self.created_by}"
+        
+        return (str) (f"{self.name} \n Price:{self.bidset.last()}$ \n Created by {self.created_by}")
+        
 
 class info_bid(models.Model):
     who= models.ForeignKey(User,on_delete=models.CASCADE,default=0)

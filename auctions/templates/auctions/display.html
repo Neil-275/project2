@@ -2,13 +2,41 @@
 
 {% block body %}
 <h3>{{item.name}}</h3>
-
+<style>
+    img{
+        width: 300px;
+        height: 200px;
+        display: inline;
+    }
+    p{
+        font-style: italic;
+        font-size: 12px;
+    }
+</style>
 <ul>
     
-    <li>Price: {{item.bidset.last}}$</li>
-    <li>Starting bid: {{item.bidset.first}}$</li>
+    <li>Price: {{item.bidset.last.bid}}$</li>
+    <p>
+        {{numbid}} bid(s) so far.
+        {% if user.id == item.bidset.last.who.id %}
+        Your bid is the current bid
+        {% else %}
+        {{item.bidset.last.who.username}}'s bid is the current bid
+        {% endif %}
+    </p>
+    <li>Starting bid: {{item.bidset.first.bid}}$</li>
     <li>Posted by: {{item.created_by}}</li>
     <li>Date: {{item.date}}</li>
+    <img src="{{item.img}}" alt="{{item.name}}">
+    
 </ul>
+
+<form action="{% url 'item' item.id%}" method ="post">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Place bid">
+</form>
+<strong>{{fail_mess}}</strong>
+
 
 {% endblock %} 

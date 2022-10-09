@@ -3,8 +3,24 @@
 {% block body %} 
     <h2>Active Listings</h2>
     {% for item in list %}
+    <style>
+        img{
+            width: 300px;
+            height: 200px;
+            display: inline;
+        }
+        a{
+            color: black;
+            font-style: normal;
+        }
+    </style>
     <ul>
-        <li><a href="{% url 'item' item.id %}">{{item}}</a></li>
+        <li>
+            <a href="{% url 'item' item.id %}">
+              <p style="white-space: pre-line">{{item}}</p>
+              <img src="{{item.img}}" alt="{{item.name}}">
+            </a>
+        </li>
     </ul>
     {% endfor %}
     TODO

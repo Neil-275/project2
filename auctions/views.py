@@ -18,7 +18,10 @@ class NewItem(forms.Form):
     name= forms.CharField()
     st_bid=forms.FloatField(label="Starting bid")
     description= forms.CharField(widget=Textarea)
+    img=forms.URLField(label="Image")
 
+class newbid(forms.Form):
+    bid= forms.FloatField(label="Place new bid")
 
 def login_view(request):
     if request.method == "POST":
@@ -88,7 +91,34 @@ def new_item(request):
         "form": NewItem()
     })
 
-def item(request, idx):
-    return render( request, "auctions/display.html",{
-        "item": auction_item.objects.get(pk=idx)
+def item(request,idx):
+    if request.method=="POST":
+        f= newbid(request.POST)
+        if f.is_valid():
+            bid=f.cleaned_data["bid"]
+            item=auction_item.objects.get(pk=idx)
+            cur_bid=float (item.bidset.last().bid)
+            if bid<=cur_bid:
+                return render( request, "auctions/display.html",{
+                    "item": auction_item.objects.get(pk=idx),
+                    "numbid": len(item.bidset.all()),
+                    "fail_mess": "You have to place higher than the current bid",
+                    "form": f
+                })
+            else: 
+                item.bidset.create(who=request.user,bid=bid)
+                return render( request, "auctions/display.html",{
+                    "item": auction_item.objects.get(pk=idx),
+                    "numbid": len(auction_item.bidset.all()),
+                })
+    else :
+        return render(request, "auctions/display.html",{
+        "item": auction_item.objects.get(pk=idx),
+        "numbid": len(auction_item.bidset.all()),
+        "form":newbid()
     })
+    
+
+
+
+        
