@@ -5,9 +5,9 @@ from django.forms import Textarea
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-
 from .models import *
 from django import forms
+from django.core.exceptions import ObjectDoesNotExist
 
 def index(request):
     return render(request, "auctions/index.html",{
@@ -91,34 +91,65 @@ def new_item(request):
         "form": NewItem()
     })
 
-def item(request,idx):
+def added(request,item):
+    s=""
+    user=request.user
+    try:
+        user.watchlist.get(id=item.id)
+    except ObjectDoesNotExist:
+        pass
+    else:
+        s="Added to your watchlist"
+    return s
+
+def viewitem(request,idx):
+    item=auction_item.objects.get(pk=idx)
     if request.method=="POST":
         f= newbid(request.POST)
         if f.is_valid():
             bid=f.cleaned_data["bid"]
-            item=auction_item.objects.get(pk=idx)
             cur_bid=float (item.bidset.last().bid)
             if bid<=cur_bid:
                 return render( request, "auctions/display.html",{
-                    "item": auction_item.objects.get(pk=idx),
+                    "item":item,
                     "numbid": len(item.bidset.all()),
                     "fail_mess": "You have to place higher than the current bid",
-                    "form": f
+                    "form": f,
+                    "wl_mess": added(request,item),
+                    
                 })
             else: 
                 item.bidset.create(who=request.user,bid=bid)
-                return render( request, "auctions/display.html",{
-                    "item": auction_item.objects.get(pk=idx),
-                    "numbid": len(auction_item.bidset.all()),
-                })
-    else :
-        return render(request, "auctions/display.html",{
-        "item": auction_item.objects.get(pk=idx),
-        "numbid": len(auction_item.bidset.all()),
-        "form":newbid()
-    })
+    return render(request, "auctions/display.html",{
+    "item": item,
+    "numbid": len(item.bidset.all()),
+    "form": newbid(),
+     "wl_mess": added(request,item)
+     })
     
+def addwatchlist(request,idx):
+    user=request.user
+    item=auction_item.objects.get(id=idx)
+    s=added(request,item)
+    if s=="":
+        user.watchlist.create(item)
+    return viewitem(request,idx)  
 
+def watchlist (request):
+    user=request.user
+    return render(request, "auctions/watchlist.html",{
+        "list": user.watchlist.all()
+    })
+   
+def closebid(request,idx):
+    item= auction_item.objects.get(id=idx)
+    item.closed=1
+    return viewitem(request,idx)
 
-
+def comment(request, idx):
+    item=auction_item.objects.get(id=idx)
+    if request.method=="POST":
+        cmt=request.POST["cmt"]
+        item.cmt.create(comment=cmt, posted_by= request.user)
+        return viewitem(request,idx)
         

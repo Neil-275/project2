@@ -8,5 +8,9 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
     path("newitem", views.new_item, name="new_item"),
-    path("item/<int:idx>",views.item, name="item"),
+    path("item/<int:idx>",views.viewitem, name="item"),
+    path("watchlist/<int:idx>",views.addwatchlist,name="addwatchlist"),
+    path("user/watchlist",views.watchlist,name="watchlist"),
+    path("item/<int:idx>/close",views.closebid,name="closebid"),
+    path("item/<int:idx>/comment",views.comment,name="comment"),
 ]

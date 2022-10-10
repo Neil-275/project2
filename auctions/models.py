@@ -1,4 +1,5 @@
 from email.policy import default
+from statistics import mode
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -13,10 +14,11 @@ class auction_item(models.Model):
     description= models.TextField(max_length=500)
     created_by= models.ForeignKey(User,on_delete=models.CASCADE,default=0)
     img= models.URLField(blank=False, default="")
+    liked= models.ForeignKey(User,on_delete= models.CASCADE,related_name="watchlist",null=True)
+    closed= models.IntegerField(default=0)
 
-    def __str__ (self):
-        
-        return (str) (f"{self.name} \n Price:{self.bidset.last()}$ \n Created by {self.created_by}")
+    def __str__ (self):    
+        return (str) (f"{self.name} | \n Price:{self.bidset.last()}$ \n ")
         
 
 class info_bid(models.Model):
@@ -28,7 +30,7 @@ class info_bid(models.Model):
         return f"{self.bid}"
     
 class cmt(models.Model):
-    item= models.ForeignKey(auction_item, on_delete= models.CASCADE,related_name="comment")
+    item= models.ForeignKey(auction_item, on_delete= models.CASCADE,related_name="cmt")
     comment= models.TextField(max_length=500)
     posted_by= models.ForeignKey(User,on_delete=models.CASCADE)
     date= models.DateTimeField(auto_now_add= True)
