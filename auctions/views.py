@@ -152,4 +152,8 @@ def comment(request, idx):
         cmt=request.POST["cmt"]
         item.cmt.create(comment=cmt, posted_by= request.user)
         return viewitem(request,idx)
-        
+
+def viewcategories(request):
+    return render(request, "auctions/categories.html", {
+        "categories": categories.objects.all(),
+    })

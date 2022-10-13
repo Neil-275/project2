@@ -1,5 +1,6 @@
 from email.policy import default
 from statistics import mode
+from unittest.util import _MAX_LENGTH
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -35,9 +36,9 @@ class cmt(models.Model):
     posted_by= models.ForeignKey(User,on_delete=models.CASCADE)
     date= models.DateTimeField(auto_now_add= True)
 
-
-
-    
-
-
-    
+class categories(models.Model):
+    name= models.CharField(max_length=64)
+    item= models.ManyToManyField(auction_item,related_name="classify")
+     
+    def __str__(self):
+        return f"{self.name}"
