@@ -8,17 +8,25 @@
             width: 300px;
             height: 200px;
             display: inline;
+            margin: 10px;
         }
         a{
-            color: black;
-            font-style: normal;
+            display: flex;
+        }
+        ul {
+        list-style: none;
+        }
+        .item{
+            border: solid gray 2px;
+            border-radius: 10px;
         }
     </style>
     <ul>
-        <li>
+        <li class ="item">
             <a href="{% url 'item' item.id %}">
-              <p style="white-space: pre-line">{{item}}</p>
               <img src="{{item.img}}" alt="{{item.name}}">
+              <p style="white-space: pre-line">{{item}}</p>
+              
             </a>
         </li>
     </ul>

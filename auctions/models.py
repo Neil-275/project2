@@ -15,11 +15,11 @@ class auction_item(models.Model):
     description= models.TextField(max_length=500)
     created_by= models.ForeignKey(User,on_delete=models.CASCADE,default=0)
     img= models.URLField(blank=False, default="")
-    liked= models.ForeignKey(User,on_delete= models.CASCADE,related_name="watchlist",null=True)
+    liked= models.ForeignKey(User,on_delete= models.CASCADE,related_name="watchlist",null=True,blank= True)
     closed= models.IntegerField(default=0)
 
     def __str__ (self):    
-        return (str) (f"{self.name} | \n Price:{self.bidset.last()}$ \n ")
+        return (str) (f"{self.name}  \n Price:{self.bidset.last()}$ \n ")
         
 
 class info_bid(models.Model):
