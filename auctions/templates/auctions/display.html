@@ -31,6 +31,7 @@
     <li>Starting bid: {{item.bidset.first.bid}}$</li>
     <li>Posted by: {{item.created_by}}</li>
     <li>Date: {{item.date}}</li>
+    <li>Description: {{item.description}} </li>
     <img src="{{item.img}}" alt="{{item.name}}">
     
 </ul>
@@ -40,15 +41,16 @@
     <input type="submit" value="Add to watchlist">
     <p>{{wl_mess}}</p>
 </form>
-
+<br>
 <!-- PLACE BID -->
-{% if item.closed == 1 or user.id != item.created_by.id  %}
+{% if item.closed == 1 %}
     {% if user.id == item.bidset.last.who.id  %}
         <strong>You have won the auction</strong>
     {% else %}
-        <strong>{{item.bidset.last.who.id}} have won the auction</strong>
+        <strong>{{item.bidset.last.who}} has won the auction</strong>
     {% endif %}   
-{% else %}
+    <br>
+{% elif user.id != item.created_by.id  %}
 <form action="{% url 'item' item.id%}" method ="post">
     {% csrf_token %}
     {{form}}
@@ -58,13 +60,18 @@
 {% endif %}
 
 <!-- CLOSE BID -->
-{% if user.id == item.created_by.id %}
-<form action="{% url 'closebid' item.id%}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Close bid">
-</form>
-{% endif %}
+{% if user.id == item.created_by.id  %}
 
+    {% if item.closed == 0 %}
+        <form action="{% url 'closebid' item.id%}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Close bid">
+        </form>
+    {% else %}
+        <strong>Closed</strong>
+    {% endif %}
+{% endif %}
+<br>
 <!-- COMMENT -->
 <form action="{% url 'comment' item.id%}" method="post">
     {% csrf_token %}

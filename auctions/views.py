@@ -8,17 +8,22 @@ from django.urls import reverse
 from .models import *
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     return render(request, "auctions/index.html",{
         "list":auction_item.objects.all(),
     })
 
+choices= categories.objects.all()
+
+
 class NewItem(forms.Form):
     name= forms.CharField()
     st_bid=forms.FloatField(label="Starting bid")
     description= forms.CharField(widget=Textarea)
     img=forms.URLField(label="Image")
+    category=forms.ChoiceField(choices=choices.values_list())
 
 class newbid(forms.Form):
     bid= forms.FloatField(label="Place new bid")
@@ -74,6 +79,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+@login_required(login_url='login')
 def new_item(request):
     if request.method == "POST"  :
         f= NewItem(request.POST)
@@ -81,8 +87,12 @@ def new_item(request):
             name=f.cleaned_data["name"]
             st_bid=f.cleaned_data["st_bid"]
             description=f.cleaned_data["description"]
-            new=auction_item(name=name, cur_bid=st_bid,description=description,created_by=request.user)
+            category=f.cleaned_data["category"]
+            img=f.cleaned_data["img"]
+            new=auction_item(name=name, cur_bid=st_bid,description=description,created_by=request.user, img=img)
             new.save()
+            category=categories.objects.get(id=category)
+            category.item.add(new)
             info_bid.objects.create(who=request.user,bid=st_bid,item=new)
             return render(request, "auctions/index.html",{
                 "list":auction_item.objects.all(),
@@ -91,6 +101,7 @@ def new_item(request):
         "form": NewItem()
     })
 
+@login_required(login_url='/login')
 def added(request,item):
     s=""
     user=request.user
@@ -102,6 +113,7 @@ def added(request,item):
         s="Added to your watchlist"
     return s
 
+@login_required(login_url='login')
 def viewitem(request,idx):
     item=auction_item.objects.get(pk=idx)
     if request.method=="POST":
@@ -127,25 +139,30 @@ def viewitem(request,idx):
      "wl_mess": added(request,item)
      })
     
+@login_required(login_url='login')
 def addwatchlist(request,idx):
     user=request.user
     item=auction_item.objects.get(id=idx)
     s=added(request,item)
     if s=="":
         user.watchlist.create(item)
-    return viewitem(request,idx)  
+    return HttpResponseRedirect(reverse('item',idx=idx))
 
+@login_required(login_url='login')
 def watchlist (request):
     user=request.user
     return render(request, "auctions/watchlist.html",{
         "list": user.watchlist.all()
     })
-   
+
+@login_required(login_url='login')
 def closebid(request,idx):
     item= auction_item.objects.get(id=idx)
     item.closed=1
-    return viewitem(request,idx)
+    item.save()
+    return HttpResponseRedirect(reverse('item',idx=idx))
 
+@login_required(login_url='login')
 def comment(request, idx):
     item=auction_item.objects.get(id=idx)
     if request.method=="POST":
@@ -153,7 +170,15 @@ def comment(request, idx):
         item.cmt.create(comment=cmt, posted_by= request.user)
         return viewitem(request,idx)
 
+@login_required(login_url='login')
 def viewcategories(request):
     return render(request, "auctions/categories.html", {
         "categories": categories.objects.all(),
+    })
+
+@login_required(login_url='login')
+def categorieslist(request,id):
+    return render(request,"auctions/categorieslist.html",{
+        "name": categories.objects.get(id=id).name,
+        "list": categories.objects.get(id=id).item.all(),
     })

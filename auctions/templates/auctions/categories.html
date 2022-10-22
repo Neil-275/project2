@@ -3,7 +3,7 @@
 {% block body %}
     {% for ct in categories %}
     <ul>
-        <li><a href="{% url 'categories'%}">{{ct}}</a></li>
+        <li><a href="{% url 'categorieslist' ct.id%}">{{ct}}</a></li>
     </ul>
     {% endfor %}
 {% endblock %}

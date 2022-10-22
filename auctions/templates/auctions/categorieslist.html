@@ -1,6 +1,12 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    {% for item in %}
+<h2>{{name}}</h2>
+{% for item in list %}
+
+{% empty %}
+<p>Empty category</p>
+
+{% endfor %}
 
 {% endblock %}
