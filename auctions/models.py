@@ -1,12 +1,13 @@
-from email.policy import default
-from statistics import mode
-from unittest.util import _MAX_LENGTH
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-
 class User(AbstractUser):
     pass
+
+class categories(models.Model):
+    name= models.CharField(max_length=64)
+    def __str__(self):
+        return f"{self.name}"
 
 class auction_item(models.Model):
     name= models.CharField(max_length=64)
@@ -15,9 +16,9 @@ class auction_item(models.Model):
     description= models.TextField(max_length=500)
     created_by= models.ForeignKey(User,on_delete=models.CASCADE,default=0)
     img= models.URLField(blank=False, default="")
-    liked= models.ForeignKey(User,on_delete= models.CASCADE,related_name="watchlist",null=True,blank= True)
+    liked= models.ManyToManyField(User,related_name="watchlist",blank= True)
     closed= models.IntegerField(default=0)
-
+    classify= models.ForeignKey(categories, on_delete=models.CASCADE,related_name="item",null=True)
     def __str__ (self):    
         return (str) (f"{self.name}  \n Price:{self.bidset.last()}$ \n ")
         
@@ -36,9 +37,4 @@ class cmt(models.Model):
     posted_by= models.ForeignKey(User,on_delete=models.CASCADE)
     date= models.DateTimeField(auto_now_add= True)
 
-class categories(models.Model):
-    name= models.CharField(max_length=64)
-    item= models.ManyToManyField(auction_item,related_name="classify")
-     
-    def __str__(self):
-        return f"{self.name}"
+

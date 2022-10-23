@@ -108,9 +108,9 @@ def added(request,item):
     try:
         user.watchlist.get(id=item.id)
     except ObjectDoesNotExist:
-        pass
+        s="Add to your watchlist"
     else:
-        s="Added to your watchlist"
+        s="Remove from your watchlist"
     return s
 
 @login_required(login_url='login')
@@ -144,9 +144,11 @@ def addwatchlist(request,idx):
     user=request.user
     item=auction_item.objects.get(id=idx)
     s=added(request,item)
-    if s=="":
-        user.watchlist.create(item)
-    return HttpResponseRedirect(reverse('item',idx=idx))
+    if s=="Remove from your watchlist":
+        user.watchlist.remove(item)
+    else :
+        user.watchlist.add(item)
+    return HttpResponseRedirect(reverse('item',kwargs={"idx": idx}))
 
 @login_required(login_url='login')
 def watchlist (request):
@@ -160,7 +162,7 @@ def closebid(request,idx):
     item= auction_item.objects.get(id=idx)
     item.closed=1
     item.save()
-    return HttpResponseRedirect(reverse('item',idx=idx))
+    return HttpResponseRedirect(reverse('item',kwargs={"idx": idx}))
 
 @login_required(login_url='login')
 def comment(request, idx):

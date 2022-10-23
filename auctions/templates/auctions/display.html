@@ -38,8 +38,10 @@
 <!-- WATCHLIST -->
 <form action="{% url 'addwatchlist' item.id %}" method ="post">
     {% csrf_token %}
-    <input type="submit" value="Add to watchlist">
-    <p>{{wl_mess}}</p>
+    {% if wl_mess == "Remove from your watchlist"%}
+    <div>Watchlist</div>
+    {% endif %}
+    <input type="submit" value="{{ wl_mess }}"">
 </form>
 <br>
 <!-- PLACE BID -->
