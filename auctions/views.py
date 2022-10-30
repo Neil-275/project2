@@ -124,7 +124,7 @@ def viewitem(request,idx):
             if bid<=cur_bid:
                 return render( request, "auctions/display.html",{
                     "item":item,
-                    "numbid": len(item.bidset.all()),
+                    "numbid": len(item.bidset.all())-1,
                     "fail_mess": "You have to place higher than the current bid",
                     "form": f,
                     "wl_mess": added(request,item),
@@ -134,7 +134,7 @@ def viewitem(request,idx):
                 item.bidset.create(who=request.user,bid=bid)
     return render(request, "auctions/display.html",{
     "item": item,
-    "numbid": len(item.bidset.all()),
+    "numbid": len(item.bidset.all())-1,
     "form": newbid(),
      "wl_mess": added(request,item)
      })

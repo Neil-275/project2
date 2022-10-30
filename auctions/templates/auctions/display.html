@@ -1,91 +1,129 @@
-{% extends 'auctions/layout.html' %}
+{% extends 'auctions/layout.html' %} {% block body %}
+<script>
+  document.addEventListener("DOMContentLoaded",()=>{
 
-{% block body %}
-<h3>{{item.name}}</h3>
+  })
+</script>
 <style>
-    img{
-        width: 300px;
-        height: 200px;
-        display: inline;
-    }
-    p{
-        font-style: italic;
-        font-size: 12px;
-    }
-    input[name="cmt"]{
-        width: 500px;
-        height: 300px;
-    }
+  img {
+    width: 500px;
+    height: 300px;
+  }
+  #hea{
+    display: flex;
+  }
+  #info {
+    margin: 50px;
+    display: flex;
+  }
+  p {
+    font-style: italic;
+    font-size: 12px;
+  }
+  input[name="cmt"] {
+    width: 500px;
+    height: 300px;
+  }
+  ul{
+	list-style: none;
+  }
+  #wl{
+    border: 1px solid black;
+    border-radius: 3px;
+    width: 70px;
+    text-align: center;
+    background-color: aquamarine;
+  }
+  input[value="Post"]{
+    position: relative;
+    left: 550px;
+    width: 90px;
+  }
 </style>
-<ul>
-    
-    <li>Price: {{item.bidset.last.bid}}$</li>
+<p id="hea">
+  <h2>{{item.name}}</h2>
+  {% if wl_mess == "Remove from your watchlist"%}
+  <p id="wl"><strong>Watchlist</strong></p>
+  {% endif %}
+</p>
+
+<div id="info">
+<img src="{{item.img}}" alt="{{item.name}}" />
+  <ul>
+    <h5>Product Information</h5>
+    <li>Price: <strong>{{item.bidset.last.bid}}$</strong></li>
     <p>
-        {{numbid}} bid(s) so far.
-        {% if user.id == item.bidset.last.who.id %}
-        Your bid is the current bid
-        {% else %}
-        {{item.bidset.last.who.username}}'s bid is the current bid
-        {% endif %}
+      {{numbid}} bid(s) so far. 
+      {% if numbid != 0  %}
+      {% if user.id == item.bidset.last.who.id %} 
+      Your bid is the current bid {% else %} {{item.bidset.last.who.username}}'s bid is the current bid 
+      {% endif %}
+      {% endif %}
     </p>
-    <li>Starting bid: {{item.bidset.first.bid}}$</li>
     <li>Posted by: {{item.created_by}}</li>
     <li>Date: {{item.date}}</li>
-    <li>Description: {{item.description}} </li>
-    <img src="{{item.img}}" alt="{{item.name}}">
-    
-</ul>
-<!-- WATCHLIST -->
-<form action="{% url 'addwatchlist' item.id %}" method ="post">
-    {% csrf_token %}
-    {% if wl_mess == "Remove from your watchlist"%}
-    <div>Watchlist</div>
-    {% endif %}
-    <input type="submit" value="{{ wl_mess }}"">
-</form>
-<br>
-<!-- PLACE BID -->
-{% if item.closed == 1 %}
-    {% if user.id == item.bidset.last.who.id  %}
-        <strong>You have won the auction</strong>
-    {% else %}
-        <strong>{{item.bidset.last.who}} has won the auction</strong>
-    {% endif %}   
+    <li>Description: <em>{{item.description}}</em></li>
+    <li>Category: <i>{{item.classify}}</i></li>
+      <!-- WATCHLIST -->
     <br>
-{% elif user.id != item.created_by.id  %}
-<form action="{% url 'item' item.id%}" method ="post">
-    {% csrf_token %}
-    {{form}}
-    <input type="submit" value="Place bid">
+  <form action="{% url 'addwatchlist' item.id %}" method="post">
+    {% csrf_token %} 
+     <input type="submit" value="{{ wl_mess }}"">
+  </form>
+  </ul>
+  
+</div>
+
+
+<br />
+<!-- PLACE BID -->
+{% if item.closed == 1 %} 
+{% if user.id == item.bidset.last.who.id %}
+<strong>You have won the auction</strong>
+{% else %}
+<strong>{{item.bidset.last.who}} has won the auction</strong>
+{% endif %}
+<br />
+{% elif user.id != item.created_by.id %}
+<form action="{% url 'item' item.id%}" method="post">
+  {% csrf_token %} {{form}}
+  <input type="submit" value="Place bid" />
 </form>
 <strong>{{fail_mess}}</strong>
 {% endif %}
 
 <!-- CLOSE BID -->
-{% if user.id == item.created_by.id  %}
-
-    {% if item.closed == 0 %}
-        <form action="{% url 'closebid' item.id%}" method="post">
-            {% csrf_token %}
-            <input type="submit" value="Close bid">
-        </form>
-    {% else %}
-        <strong>Closed</strong>
-    {% endif %}
-{% endif %}
-<br>
+{% if user.id == item.created_by.id %} {% if item.closed == 0 %}
+<form action="{% url 'closebid' item.id%}" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Close bid" />
+</form>
+{% else %}
+<strong>Closed</strong>
+{% endif %} {% endif %}
+<br />
 <!-- COMMENT -->
-<form action="{% url 'comment' item.id%}" method="post">
-    {% csrf_token %}
-    <textarea placeholder="Leave your comment here" name="cmt"  rows="9" cols="100"></textarea>
+<div id="cmt">
 
-    <br>
-    <input type="submit" value="Post">
+</div>
+<form action="{% url 'comment' item.id%}" method="post">
+  {% csrf_token %}
+  <textarea
+    placeholder="Leave your comment here"
+    name="cmt"
+    rows="9"
+    cols="90"
+  ></textarea>
+
+  <br />
+  <input type="submit" value="Post" />
 </form>
 <h3>Comments</h3>
 {% for cmt in item.cmt.all %}
-    <strong>{{ cmt.posted_by }} on {{cmt.date}}</strong>
-    <div>{{ cmt.comment }}</div>
-{% endfor %}
 
-{% endblock %} 
+<strong>{{ cmt.posted_by }} on {{cmt.date}}</strong>
+<div>{{ cmt.comment }}</div>
+{% empty %}
+<h7>No comments yet</h7>
+{% endfor %}
+ {% endblock %}
