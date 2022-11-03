@@ -169,8 +169,9 @@ def comment(request, idx):
     item=auction_item.objects.get(id=idx)
     if request.method=="POST":
         cmt=request.POST["cmt"]
-        item.cmt.create(comment=cmt, posted_by= request.user)
-        return viewitem(request,idx)
+        if (cmt!=""):
+            item.cmt.create(comment=cmt, posted_by= request.user)
+        return HttpResponseRedirect(reverse('item',kwargs={"idx": idx}));
 
 @login_required(login_url='login')
 def viewcategories(request):

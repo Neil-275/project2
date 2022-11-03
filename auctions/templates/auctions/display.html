@@ -1,9 +1,5 @@
 {% extends 'auctions/layout.html' %} {% block body %}
-<script>
-  document.addEventListener("DOMContentLoaded",()=>{
 
-  })
-</script>
 <style>
   img {
     width: 500px;
@@ -34,12 +30,21 @@
     text-align: center;
     background-color: aquamarine;
   }
-  input[value="Post"]{
+
+  input[value="Post"],button[id="tmp"]{
     position: relative;
     left: 550px;
     width: 90px;
   }
+  .opencmt{
+    display: block;
+  }
+  div[class='opencmt']{
+    display: none;
+  }
+  
 </style>
+
 <p id="hea">
   <h2>{{item.name}}</h2>
   {% if wl_mess == "Remove from your watchlist"%}
@@ -101,24 +106,42 @@
 {% else %}
 <strong>Closed</strong>
 {% endif %} {% endif %}
-<br />
-<!-- COMMENT -->
-<div id="cmt">
+<br>
 
-</div>
-<form action="{% url 'comment' item.id%}" method="post">
-  {% csrf_token %}
-  <textarea
-    placeholder="Leave your comment here"
-    name="cmt"
-    rows="9"
-    cols="90"
-  ></textarea>
-
-  <br />
-  <input type="submit" value="Post" />
 </form>
 <h3>Comments</h3>
+<!-- COMMENT -->
+<div class="opencmt">
+  <form action="{% url 'comment' item.id%}" method="post">
+    {% csrf_token %}
+    <textarea
+      placeholder="Leave your comment here"
+      name="cmt"
+      rows="9"
+      cols="90"
+      required
+    ></textarea>
+    <br />
+    <input  type="submit" value="Post" />
+    <button id="tmp" type="button" onclick="f()">Cancel</button>
+</div>
+
+<p>
+  <button class="opencmt" type="button" onclick="f()">Write comment?</button>
+</p>
+
+<script>
+  function f(){
+    document.querySelectorAll(".opencmt").forEach(tmp=>{
+      const a=window.getComputedStyle(tmp,null);
+      if (a.display==="block")
+       tmp.style.display='none';
+      else 
+        tmp.style.display='block';
+    })
+  } 
+</script>
+
 {% for cmt in item.cmt.all %}
 
 <strong>{{ cmt.posted_by }} on {{cmt.date}}</strong>
