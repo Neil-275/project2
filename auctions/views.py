@@ -132,6 +132,7 @@ def viewitem(request,idx):
                 })
             else: 
                 item.bidset.create(who=request.user,bid=bid)
+                item.cur_bid=bid
     return render(request, "auctions/display.html",{
     "item": item,
     "numbid": len(item.bidset.all())-1,
