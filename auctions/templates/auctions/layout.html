@@ -51,7 +51,7 @@
         <hr>
         {% block body %}
         {% endblock %}
-        {% for item in list %}
+        
         <style>
             img{
                 width: 300px;
@@ -59,25 +59,37 @@
                 margin: 10px;
             }
             a{
-                display: flex;
+                display:block;
             }
-            ul {
+            .listing {
                 list-style: none;
+                display: flex;
             }
             .item{
                 border: solid gray 2px;
                 border-radius: 10px;
+                white-space: pre-line
+            }
+            .info{
+                width:300px;
+                text-align: center;
             }
         </style>
-        <ul>
-            <li class ="item">
+        <ul class="listing">
+            {% for item in list %}
+            <li >
                 <a href="{% url 'item' item.id %}">
-                <img src="{{item.img}}" alt="{{item.name}}">
-                <p style="white-space: pre-line">{{item}}</p>
+                <img class ="item" src="{{item.img}}" alt="{{item.name}}">
+                <div class="info">
+                    {{item.name}}
+                    <br>
+                    Price: {{item.bidset.last.bid}}$
+                </div>
                 
                 </a>
             </li>
+            {% endfor %}
         </ul>
-    {% endfor %}
+    
     </body>
 </html>

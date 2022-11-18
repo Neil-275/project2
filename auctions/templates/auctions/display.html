@@ -1,5 +1,5 @@
-{% extends 'auctions/layout.html' %} {% block body %}
-
+{% extends 'auctions/layout.html' %} 
+{% block body %}
 <style>
   img {
     width: 500px;
@@ -143,9 +143,11 @@
 </script>
 
 {% for cmt in item.cmt.all %}
+<div>
+  <strong>{{ cmt.posted_by }} on {{cmt.date}}</strong>
+  <div>{{ cmt.comment }}</div>
+</div>
 
-<strong>{{ cmt.posted_by }} on {{cmt.date}}</strong>
-<div>{{ cmt.comment }}</div>
 {% empty %}
 <h7>No comments yet</h7>
 {% endfor %}

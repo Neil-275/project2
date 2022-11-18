@@ -22,7 +22,7 @@ class NewItem(forms.Form):
     name= forms.CharField()
     st_bid=forms.FloatField(label="Starting bid")
     description= forms.CharField(widget=Textarea)
-    img=forms.URLField(label="Image")
+    img=forms.ImageField(label="Image")
     category=forms.ChoiceField(choices=choices.values_list())
 
 class newbid(forms.Form):
